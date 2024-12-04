@@ -19,5 +19,9 @@ lmin = 1e-7
 ld=np.linspace(lmin,lmax,N_fot)
 
 
+somma=0
+for i in range(len(ld)):
+	somma=somma+funzioni.den_fot(ld[i],T_s)
+
 mc_int=(lmax-lmin)/N_fot * somma
 

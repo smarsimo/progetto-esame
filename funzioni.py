@@ -1,9 +1,7 @@
-import sys
+import sys, os
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy import optimize
 import math
+import decimal
 
 c=3e8       # m s^-1
 h=6.626e-34 # J s
@@ -26,6 +24,13 @@ def rad_cn(l, T):
 	st = 1/(np.exp(sa/so)-1)
 	return pt*st
 
+def E_gamma(l):
+	"""
+	funzione che restituisce l'energia del fotone in funzione della
+	lunghezza d'onda dello stesso
+	"""
+	return (h*c)/l
+
 def den_fot(l, T):
 	"""
 	funzione densità di fotoni per lunghezza d'onda
@@ -35,8 +40,7 @@ def den_fot(l, T):
 	l : lunghezza d'onda
 	T : Temperatura del corpo nero
 	"""
-	E_gamma = h*c / l
-	return rad_cn(l, T)*E_gamma
+	return rad_cn(l, T)*E_gamma(l)
 
 def beta_sc(l, n=1.00029, N=2.504e25):
 	"""
@@ -60,25 +64,6 @@ def N_obs(N_0, l, S):
 	return N_0 * np.exp(-beta_sc(l)*S)
 
 
-T_s  = 5.75e3 # K	
-T_a  = 4e3    # K
-T_sp = 18e3   # K
-#consideriamo un range di lunghezze d'onda 
-ld=np.linspace(0,2e-6,100)
-plt.subplots(figsize=(9,10))
-plt.plot(ld, den_fot(ld, T_s), color='purple'    )
-plt.xlabel("${\lambda}$ [${\mu}m$]")
-plt.ylabel('B [J$m^{-3}s^{-1}$]')
-plt.suptitle("distribuzione dei fotoni solari in funzione della lunghezza d'onda")
-plt.show()
-
-distr=np.random.random(100)
-obs_n=N_obs(distr, ld, 8000)
-plt.plot(ld, N_obs(distr, ld, 8000))
-plt.xlabel('$\lambda$ [$\mu$m]')
-plt.ylabel('$N_{obs}$')
-plt.suptitle("numero di particelle osservato in funzione del lunghezza d'onda")
-plt.show()
 
 
 
