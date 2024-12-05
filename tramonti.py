@@ -6,22 +6,30 @@ import scipy
 import decimal
 
 sys.path.append('funzioni.py')
-import funzioni
+import funzioni 
 
 T_s  = 5.75e3 # K	
 T_a  = 4e3    # K
 T_sp = 18e3   # K
 
 #numero di fotoni
-N_fot=1000
+N_fot=10000
+N_estr=10000
 lmax = 2e-6
 lmin = 1e-7
-ld=np.linspace(lmin,lmax,N_fot)
+lt=np.linspace(lmin,lmax,N_estr)
+ld=np.random.uniform(lmin,lmax,N_estr)
 
+def scaled_den(l,T):
+	return funzioni.den_fot(l,T)/max(funzioni.den_fot(l,T))
+	
+y_i = np.random.random(N_estr)
+	
+mask= y_i <= scaled_den(ld, T_s)
 
-somma=0
-for i in range(len(ld)):
-	somma=somma+funzioni.den_fot(ld[i],T_s)
+x_i=ld[mask]
 
-mc_int=(lmax-lmin)/N_fot * somma
+plt.hist(x_i,bins=100,color='blue',ec='darkblue')
+plt.suptitle('distribuzione dei fotoni che arrivano in caso di non assorbimento')
+plt.show()	
 
