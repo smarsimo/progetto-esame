@@ -8,15 +8,19 @@ import decimal
 sys.path.append('funzioni.py')
 import funzioni 
 
+R_ter   = 6.378e6  # m
 T_s   = 5.75e3   # K	
 T_a   = 4e3      # K
 T_sp  = 18e3     # K
 n_ter = 1.00029 
 N_ter = 2.504e25 # mol/m^3
 
+#spessore della massa d'aria all'orizzonte
+S_hor = np.sqrt((R_ter+8000)**2 - R_ter**2)
+
 def parse_arguments():
 	parser = argparse.ArgumentParser(description='simulazione diffusione di fotoni', usage='python3 tramonti.py --opzione')
-	parser.add_argument('--solsc', action='store_true', help='produce un grafico della densità dei fotoni solari secondo teoria e altri tre grafici che simulano la distribuzione degli stessi in tre differenti casi')
+	parser.add_argument('--solsc', action='store_true', help='produce i grafici delle densità dei fotoni solari secondo teoria e altri tre grafici che simulano la distribuzione, tramite metodo montecarlo, degli stessi in tre differenti casi')
 	
 	
 	return parser.parse_args()
@@ -50,7 +54,7 @@ def tramonti():
 		
 		#grafico della densità dei fotoni che arrivano dal sole
 		plt.plot(     lt,den,color='royalblue'                                  )
-		plt.suptitle( "grafico della densità in funzione della lunghezza d'onda")
+		plt.suptitle( "densità dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
 		plt.xlabel(   r'$\lambda [\mu m]$'                                      )
 		plt.ylabel(   'densità dei fotoni [$m^-3$]'                             )
 		plt.show()
@@ -71,9 +75,10 @@ def tramonti():
 		
 		#grafico della distribuzione dei fotoni che arrivano in caso di
 		#non assorbimento
-		n, bins, _ = plt.hist(l_i,bins=100,color='blue',ec='darkblue')
+		plt.hist(l_i,bins=100,color='royalblue',ec='darkblue')
 		plt.suptitle('distribuzione dei fotoni che arrivano in caso di non assorbimento')
 		plt.xlabel(r'${\lambda}[\mu m]$')
+		plt.ylabel(r'fotoni [$m^{-3}$]')		
 		plt.show()			
 		
 		#utilizzo lo stesso metodo nel caso in cui si abbia 
@@ -85,9 +90,43 @@ def tramonti():
 		#stampo i valori estratti delle lunghezze d'onda
 		print(l_i2)
 		
+		#grafico usando l'array di lunghezze d'onda
+		plt.plot(lt, funzioni.abs_den(lt, T_s, n_ter, N_ter, 8000),color='orange')
+		plt.xlabel(r'$\lambda [\mu m]$')
+		plt.ylabel(r'densità fotoni [$m^{-3}$]')
+		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ZENITH)")
+		plt.show()
+		
+		#metto in un istogramma i dati raccolti
 		plt.hist(l_i2, bins=100,color='orange',ec='darkorange')
 		plt.suptitle('distribuzione dei fotoni in caso di assorbimento (ZENITH)')
 		plt.xlabel(r'${\lambda}[\mu m]$')
+		plt.ylabel(r'fotoni [$m^{-3}$]')
+		plt.show()
+		
+		#ancora una volta utilizzo una maschera, qui considero sempre
+		#assorbimento, ma il sole si trova all'orizzonte
+		mask3 = d_i <= scaled_den2(ld, T_s, n_ter, N_ter, S_hor)
+		l_i3  = ld[mask3]
+		
+		#stampo 
+		print(l_i3)
+		
+		#grafico della densità dei fotoni considerando la funzione 
+		#densità nel caso in cui si abbia assorbimento e il sole si 
+		#trovi all'orizzonte, usando l'array di lunghezze d'onda
+		plt.plot(lt, funzioni.abs_den(lt, T_s, n_ter, N_ter, S_hor),color='turquoise')
+		plt.xlabel(r'$\lambda [\mu m]$')
+		plt.ylabel(r'densità dei fotoni [$m^{-3}$]')
+		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
+		plt.show()
+		
+		#grafico della distribuzione dei fotoni usando il metodo 
+		#montecarlo
+		plt.hist(l_i3, bins =100, color='turquoise', ec='lightseagreen')
+		plt.suptitle('distribuzione dei fotoni in caso di assorbimento (ORIZZONTE)')
+		plt.xlabel(r'${\lambda}[\mu m]$')
+		plt.ylabel(r'fotoni [$m^{-3}$]')
 		plt.show()
 		
 		
