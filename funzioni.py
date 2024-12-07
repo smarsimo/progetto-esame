@@ -42,7 +42,7 @@ def den_fot(l, T):
 	"""
 	return rad_cn(l, T)*E_gamma(l)
 
-def beta_sc(l, n=1.00029, N=2.504e25):
+def beta_sc(l, n, N):
 	"""
 	funzione che descrive la probabilità di interazione tra le onde
 	e le particelle presenti nell'atmosfera
@@ -54,14 +54,28 @@ def beta_sc(l, n=1.00029, N=2.504e25):
 	----- RESTITUISCE -----
 	il coefficiente di scattering di Rayleigh
 	"""
-	ter=(n**2 -1)**2
+	ter=(n**2 -1)
 	so=3*N*l**4
 	sa=8*np.pi**3
-	return sa*ter/so
+	return sa * ter**2 /so
 
 
-def N_obs(N_0, l, S):
-	return N_0 * np.exp(-beta_sc(l)*S)
+def abs_den(l, T, n, N, S):
+	"""
+	funzione che restituisce il numero di fotoni nel caso in cui 
+	si abbia assorbimento 
+	abs_den=den_fot(l,T)*exp(-beta_sc(l,n,N)*S)
+	-----  PARAMETRI  -----
+	l : lunghezza d'onda
+	T : temperatura della stella
+	n : indice di rifrazione
+	N : densità di molecole
+	S : spessore della massa d'aria
+	----- RESTITUISCE -----
+	densità di fotoni in funzione dello spessore della massa
+	d'aria
+	"""
+	return den_fot(l,T) * np.exp(-beta_sc(l,n,N) * S)
 
 
 
