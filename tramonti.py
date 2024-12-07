@@ -8,20 +8,21 @@ import decimal
 sys.path.append('funzioni.py')
 import funzioni 
 
-R_ter   = 6.378e6  # m
-T_s   = 5.75e3   # K	
-T_a   = 4e3      # K
-T_sp  = 18e3     # K
-n_ter = 1.00029 
-N_ter = 2.504e25 # mol/m^3
+R_ter = 6.378e6  # m raggio della terra
+T_s   = 5.75e3   # K temperatura del sole	
+T_a   = 4e3      # K temperatura di Aldebaran
+T_v   = 9.6e3    # K temperatura di Vega
+T_sp  = 18e3     # K temperatura di Spica
+n_ter = 1.00029  #   indice di rifrazione dell'aria
+N_ter = 2.504e25 # mol/m^3 densità delle molecole presenti in atmosfera
 
 #spessore della massa d'aria all'orizzonte
 S_hor = np.sqrt((R_ter+8000)**2 - R_ter**2)
 
 def parse_arguments():
 	parser = argparse.ArgumentParser(description='simulazione diffusione di fotoni', usage='python3 tramonti.py --opzione')
-	parser.add_argument('--solsc', action='store_true', help='produce i grafici delle densità dei fotoni solari secondo teoria e altri tre grafici che simulano la distribuzione, tramite metodo montecarlo, degli stessi in tre differenti casi')
-	
+	parser.add_argument('--solsc',   action='store_true', help='produce i grafici delle densità dei fotoni solari secondo teoria e altri tre grafici che simulano la distribuzione, tramite metodo montecarlo, degli stessi in tre differenti casi')
+	parser.add_argument('--intflux', action='store_true', help="studio dell'andamento del flusso di fotoni in funzione della posizione del sole rispetto allo zenith")
 	
 	return parser.parse_args()
 
@@ -128,6 +129,18 @@ def tramonti():
 		plt.xlabel(r'${\lambda}[\mu m]$')
 		plt.ylabel(r'fotoni [$m^{-3}$]')
 		plt.show()
+		
+		
+	if args.intflux == True:
+		
+		N_estr=10000
+		lmax=2e-6
+		lmin=1e-7
+		
+		#potrebbe voler dire che vuole che si faccia un grafico dove 
+		#sull'asse delle x troviamo gli angoli rispetto allo zenith
+		#mentre sull'asse delle y troviamo i valori dell'integrale della
+		#funzione densità (?)
 		
 		
 		

@@ -77,7 +77,18 @@ def abs_den(l, T, n, N, S):
 	"""
 	return den_fot(l,T) * np.exp(-beta_sc(l,n,N) * S)
 
-
-
+def th_airmass(R, S, theta):
+	"""
+	funzione dello spessore della massa d'aria in funzione 
+	dell'angolo theta rispetto allo zenith
+	-----  PARAMETRI  -----
+	R     : raggio del pianeta
+	S     : spessore della massa d'aria allo zenith
+	theta : angolo che individua la posizione del sole rispetto allo zenith
+	----- RESTITUISCE -----
+	restituisce il valore dello spessore della massa d'aria nella
+	posizione considerata
+	"""
+	return np.sqrt((R*np.cos(theta))**2 + 2*R*S + S**2) - R*np.cos(theta)
 
 
