@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 import scipy
-import decimal
+import matplotlib.ticker as tck
 
 sys.path.append('funzioni.py')
 import funzioni 
@@ -21,8 +21,10 @@ S_hor = np.sqrt((R_ter+8000)**2 - R_ter**2)
 
 def parse_arguments():
 	parser = argparse.ArgumentParser(description='simulazione diffusione di fotoni', usage='python3 tramonti.py --opzione')
-	parser.add_argument('--solsc',   action='store_true', help='produce i grafici delle densità dei fotoni solari secondo teoria e altri tre grafici che simulano la distribuzione, tramite metodo montecarlo, degli stessi in tre differenti casi')
-	parser.add_argument('--intflux', action='store_true', help="studio dell'andamento del flusso di fotoni in funzione della posizione del sole rispetto allo zenith")
+	parser.add_argument('--sole',      action = 'store_true', help = "attraverso il metodo montecarlo, studia la distribuzione dei fotoni solari in funzione della lunghezza d'onda per tre diversi casi ed il flusso totale di fotoni in funzione della posizione del sole rispetto allo zenith")
+	parser.add_argument('--aldebaran', action = 'store_true', help = "studio della distribuzione dei fotoni per Aldebaran")
+	parser.add_argument('--vega',      action = 'store_true', help = "studio della distribuzione dei fotoni per Vega")
+	parser.add_argument('--spica',     action = 'store_true', help = "studio della distribuzione dei fotoni per Spica")
 	
 	return parser.parse_args()
 
@@ -44,16 +46,29 @@ def tramonti():
 	
 	args = parse_arguments()
 	
-	if args.solsc == True:
+	if args.sole or args.aldebaran or args.vega or args.spica == True:
 
 		N_estr=10000
 		lmax = 2e-6
 		lmin = 1e-7
 		
-		lt  = np.linspace(lmin, lmax, N_estr)
-		den = funzioni.den_fot(lt, T_s)
+		if args.sole == True:
+			T = T_s
+		elif args.aldebaran == True:
+			T = T_a
+		elif args.vega == True:
+			T = T_v
+		elif args.spica == True:
+			T = T_sp
 		
-		#grafico della densità dei fotoni che arrivano dal sole
+		lt  = np.linspace(lmin, lmax, N_estr)
+		den = funzioni.den_fot(lt, T)
+		
+		#stampo la lunghezza d'onda che si ha in corrispondenza del picco
+		m = den == max(funzioni.den_fot(lt, T))
+		print("se non si ha assorbimento il picco di radiazione si ha in corrispondenza di:", lt[m])
+		
+		#grafico della densità dei fotoni che arrivano dalla stella
 		plt.plot(     lt,den,color='royalblue'                                  )
 		plt.suptitle( "densità dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
 		plt.xlabel(   r'$\lambda [\mu m]$'                                      )
@@ -68,11 +83,8 @@ def tramonti():
 		d_i = np.random.random(N_estr)
 		
 		#utilizzo un maschera per selezionare le lunghezze d'onda giuste
-		mask1 = d_i <= scaled_den(ld, T_s)
+		mask1 = d_i <= scaled_den(ld, T)
 		l_i = ld[mask1]
-
-		#stampo le lunghezze d'onda estratte
-		print(l_i)
 		
 		#grafico della distribuzione dei fotoni che arrivano in caso di
 		#non assorbimento
@@ -83,16 +95,15 @@ def tramonti():
 		plt.show()			
 		
 		#utilizzo lo stesso metodo nel caso in cui si abbia 
-		#assorbimento, in particolare nel caso in cui il sole 
+		#assorbimento, in particolare nel caso in cui la stella
 		#sia allo zenith
-		mask2 = d_i <= scaled_den2(ld, T_s, n_ter, N_ter, 8000)
+		mask2 = d_i <= scaled_den2(ld, T, n_ter, N_ter, 8000)
 		l_i2  = ld[mask2]
 		
-		#stampo i valori estratti delle lunghezze d'onda
-		print(l_i2)
+		#stampo la lunghezza d'onda in cui si ha il picco di 
 		
 		#grafico usando l'array di lunghezze d'onda
-		plt.plot(lt, funzioni.abs_den(lt, T_s, n_ter, N_ter, 8000),color='orange')
+		plt.plot(lt, funzioni.abs_den(lt, T, n_ter, N_ter, 8000),color='orange')
 		plt.xlabel(r'$\lambda [\mu m]$')
 		plt.ylabel(r'densità fotoni [$m^{-3}$]')
 		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ZENITH)")
@@ -106,17 +117,14 @@ def tramonti():
 		plt.show()
 		
 		#ancora una volta utilizzo una maschera, qui considero sempre
-		#assorbimento, ma il sole si trova all'orizzonte
-		mask3 = d_i <= scaled_den2(ld, T_s, n_ter, N_ter, S_hor)
+		#assorbimento, ma la stella si trova all'orizzonte
+		mask3 = d_i <= scaled_den2(ld, T, n_ter, N_ter, S_hor)
 		l_i3  = ld[mask3]
 		
-		#stampo 
-		print(l_i3)
-		
 		#grafico della densità dei fotoni considerando la funzione 
-		#densità nel caso in cui si abbia assorbimento e il sole si 
+		#densità nel caso in cui si abbia assorbimento e la stella si 
 		#trovi all'orizzonte, usando l'array di lunghezze d'onda
-		plt.plot(lt, funzioni.abs_den(lt, T_s, n_ter, N_ter, S_hor),color='turquoise')
+		plt.plot(lt, funzioni.abs_den(lt, T, n_ter, N_ter, S_hor),color='turquoise')
 		plt.xlabel(r'$\lambda [\mu m]$')
 		plt.ylabel(r'densità dei fotoni [$m^{-3}$]')
 		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
@@ -130,17 +138,32 @@ def tramonti():
 		plt.ylabel(r'fotoni [$m^{-3}$]')
 		plt.show()
 		
+		#studio del flusso integrato di fotoni in funzione dell'angolo 
+		#della posizione della stella rispetto allo zenith
+		theta  = np.linspace(0,np.pi/2,100)
+		m_s    = max(funzioni.abs_den(lt, T, n_ter, N_ter, 8000))
+		S_th   = funzioni.th_airmass(R_ter, 8000, theta)
+		fl_int = []
 		
-	if args.intflux == True:
+		#ciclo for per calcolare il flusso dei fotoni per ogni theta
+		#li "appendo" nella lista fl_int per poi metterla in un grafico
+		#con gli angoli
+		for i in range(len(theta)):
+			d_int    = np.random.random(N_estr)
+			mask_int = d_int <= funzioni.abs_den(ld, T, n_ter, N_ter, S_th[i])/m_s
+			l_int   = ld[mask_int]
+			fl_int.append(len(l_int))
+			
+		f, ax = plt.subplots()
+		ax.plot(theta/np.pi,fl_int,'-o',color='crimson')		
+		ax.xaxis.set_major_formatter(tck.FormatStrFormatter(r'%g $\pi$'))
+		ax.xaxis.set_major_locator(tck.MultipleLocator(base=0.1))
+		plt.suptitle("flusso integrato di fotoni in funzione dell'angolo")
+		plt.xlabel(r'$\theta$ [rad]')
+		plt.ylabel("numero di fotoni $[m^{-3}]$")
+		plt.show()
 		
-		N_estr=10000
-		lmax=2e-6
-		lmin=1e-7
-		
-		#potrebbe voler dire che vuole che si faccia un grafico dove 
-		#sull'asse delle x troviamo gli angoli rispetto allo zenith
-		#mentre sull'asse delle y troviamo i valori dell'integrale della
-		#funzione densità (?)
+			
 		
 		
 		
