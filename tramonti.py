@@ -21,10 +21,10 @@ S_hor = np.sqrt((R_ter+8000)**2 - R_ter**2)
 
 def parse_arguments():
 	parser = argparse.ArgumentParser(description='simulazione diffusione di fotoni', usage='python3 tramonti.py --opzione')
-	parser.add_argument('--sole',      action = 'store_true', help = "attraverso il metodo montecarlo, studia la distribuzione dei fotoni solari in funzione della lunghezza d'onda per tre diversi casi ed il flusso totale di fotoni in funzione della posizione del sole rispetto allo zenith")
-	parser.add_argument('--aldebaran', action = 'store_true', help = "studio della distribuzione dei fotoni per Aldebaran")
-	parser.add_argument('--vega',      action = 'store_true', help = "studio della distribuzione dei fotoni per Vega")
-	parser.add_argument('--spica',     action = 'store_true', help = "studio della distribuzione dei fotoni per Spica")
+	parser.add_argument('--sole',      '-so',      action = 'store_true', help = "attraverso il metodo montecarlo, studia la distribuzione dei fotoni solari in funzione della lunghezza d'onda per tre diversi casi ed il flusso totale di fotoni in funzione della posizione del sole rispetto allo zenith")
+	parser.add_argument('--aldebaran', '-a',       action = 'store_true', help = "studio della distribuzione dei fotoni per Aldebaran")
+	parser.add_argument('--vega',      '-v',       action = 'store_true', help = "studio della distribuzione dei fotoni per Vega")
+	parser.add_argument('--spica',     '-sp',      action = 'store_true', help = "studio della distribuzione dei fotoni per Spica")
 	
 	return parser.parse_args()
 
@@ -50,7 +50,7 @@ def tramonti():
 
 		N_estr=10000
 		lmax = 2e-6
-		lmin = 1e-7
+		lmin = 1e-8
 		
 		if args.sole == True:
 			T = T_s
@@ -182,17 +182,22 @@ def tramonti():
 		p, pcov = optimize.curve_fit(fit, theta, fl_int, p0=[pstart])
 		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1]," e C = ", p[2])
 		y = fit(theta, p[0], p[1], p[2])
-		plt.plot(theta,fl_int, 'o', color='crimson')
-		plt.plot(theta,y, color='slateblue')
-		plt.suptitle('fit dei dati con una funzione logaritmica')
-		plt.xlabel(r'$\theta$ [rad]')
-		plt.ylabel('fotoni $m^{-3}$')
-		plt.show()
 		
 		#test del chi quadro
 		chi2 = np.sum((y-fl_int)**2 /fl_int)
 		ndf  = len(theta)-len(p)
 		print("\u03C7^2 / ndf = ",chi2/ndf )
+		
+		plt.plot(theta,fl_int, 'o', color='crimson')
+		plt.plot(theta,y, color='slateblue')
+		plt.suptitle('fit dei dati con una funzione logaritmica')
+		plt.xlabel(r'$\theta$ [rad]')
+		plt.ylabel('fotoni $m^{-3}$')
+		plt.text(0, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
+		plt.text(0,1002, 'A $log(Bx)+C$', fontsize=16)
+		plt.show()
+		
+		
 		
 
 
