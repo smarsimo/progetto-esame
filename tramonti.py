@@ -68,13 +68,6 @@ def tramonti():
 		m = den == max(funzioni.den_fot(lt, T))
 		print("se non si ha assorbimento il picco di radiazione si ha in corrispondenza di:", lt[m])
 		
-		#grafico della densità dei fotoni che arrivano dalla stella
-		plt.plot(     lt,den,color='royalblue'                                  )
-		plt.suptitle( "densità dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
-		plt.xlabel(   r'$\lambda [\mu m]$'                                      )
-		plt.ylabel(   'densità dei fotoni [$m^-3$]'                             )
-		plt.show()
-		
 		#faccio un'estrazione della lunghezza d'onda nel dominio
 		#di definizione, utilizzo il metodo hit or miss
 		ld = np.random.uniform(lmin, lmax, N_estr)
@@ -86,12 +79,17 @@ def tramonti():
 		mask1 = d_i <= scaled_den(ld, T)
 		l_i = ld[mask1]
 		
+		#grafico della densità dei fotoni che arrivano dalla stella
+		fig, (ax1, ax2) = plt.subplots(2, sharex=True)
+		fig.suptitle( "densità e distribuzione dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
+		ax1.plot(lt,den,color='royalblue'           )
+		ax1.set(ylabel='densità dei fotoni [$m^-3$]'                             )
+		
 		#grafico della distribuzione dei fotoni che arrivano in caso di
 		#non assorbimento
-		plt.hist(l_i,bins=100,color='royalblue',ec='darkblue')
-		plt.suptitle('distribuzione dei fotoni che arrivano in caso di non assorbimento')
-		plt.xlabel(r'${\lambda}[\mu m]$')
-		plt.ylabel(r'fotoni [$m^{-3}$]')		
+		ax2.hist(l_i,bins=100,color='royalblue',ec='darkblue')
+		ax2.set(xlabel=r'${\lambda}[\mu m]$')
+		ax2.set(ylabel=r'fotoni [$m^{-3}$]')		
 		plt.show()			
 		
 		#utilizzo lo stesso metodo nel caso in cui si abbia 
@@ -101,19 +99,20 @@ def tramonti():
 		l_i2  = ld[mask2]
 		
 		#stampo la lunghezza d'onda in cui si ha il picco di 
+		abd = funzioni.abs_den(lt, T, n_ter, N_ter, 8000)
+		m2  = abd == max(funzioni.abs_den(lt, T, n_ter, N_ter, 8000))
+		print("nel caso si trovi allo zenith, il picco di radiazione si ha in corrispondenza di: ",lt[m2])
 		
 		#grafico usando l'array di lunghezze d'onda
-		plt.plot(lt, funzioni.abs_den(lt, T, n_ter, N_ter, 8000),color='orange')
-		plt.xlabel(r'$\lambda [\mu m]$')
-		plt.ylabel(r'densità fotoni [$m^{-3}$]')
-		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ZENITH)")
-		plt.show()
+		fig, (ax3, ax4) = plt.subplots(2,sharex=True)
+		ax3.plot(lt, abd,color='orange')
+		ax3.set(ylabel=r'densità fotoni [$m^{-3}$]')
+		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ZENITH)")
 		
 		#metto in un istogramma i dati raccolti
-		plt.hist(l_i2, bins=100,color='orange',ec='darkorange')
-		plt.suptitle('distribuzione dei fotoni in caso di assorbimento (ZENITH)')
-		plt.xlabel(r'${\lambda}[\mu m]$')
-		plt.ylabel(r'fotoni [$m^{-3}$]')
+		ax4.hist(l_i2, bins=100,color='orange',ec='darkorange')
+		ax4.set(xlabel=r'${\lambda}[\mu m]$')
+		ax4.set(ylabel=r'fotoni [$m^{-3}$]')
 		plt.show()
 		
 		#ancora una volta utilizzo una maschera, qui considero sempre
@@ -121,21 +120,25 @@ def tramonti():
 		mask3 = d_i <= scaled_den2(ld, T, n_ter, N_ter, S_hor)
 		l_i3  = ld[mask3]
 		
+		#stampo anche in questo caso la lunghezza d'onda dove si 
+		#ha il picco
+		abd2 = funzioni.abs_den(lt, T, n_ter, N_ter, S_hor)
+		m3   = abd2 == max(funzioni.abs_den(lt, T, n_ter, N_ter, S_hor))
+		print("nel caso in cui il sole sia all'orizzonte, il picco di radiazione si ha in corrispondenza di:", lt[m3])
+		
 		#grafico della densità dei fotoni considerando la funzione 
 		#densità nel caso in cui si abbia assorbimento e la stella si 
 		#trovi all'orizzonte, usando l'array di lunghezze d'onda
-		plt.plot(lt, funzioni.abs_den(lt, T, n_ter, N_ter, S_hor),color='turquoise')
-		plt.xlabel(r'$\lambda [\mu m]$')
-		plt.ylabel(r'densità dei fotoni [$m^{-3}$]')
-		plt.suptitle("densità dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
-		plt.show()
+		fig, (ax5, ax6) = plt.subplots(2,sharex=True)
+		ax5.plot(lt, abd2,color='turquoise')
+		ax5.set(ylabel=r'densità dei fotoni [$m^{-3}$]')
+		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
 		
 		#grafico della distribuzione dei fotoni usando il metodo 
 		#montecarlo
-		plt.hist(l_i3, bins =100, color='turquoise', ec='lightseagreen')
-		plt.suptitle('distribuzione dei fotoni in caso di assorbimento (ORIZZONTE)')
-		plt.xlabel(r'${\lambda}[\mu m]$')
-		plt.ylabel(r'fotoni [$m^{-3}$]')
+		ax6.hist(l_i3, bins =100, color='turquoise', ec='lightseagreen')
+		ax6.set(xlabel=r'${\lambda}[\mu m]$')
+		ax6.set(ylabel=r'fotoni [$m^{-3}$]')
 		plt.show()
 		
 		#studio del flusso integrato di fotoni in funzione dell'angolo 
@@ -154,6 +157,7 @@ def tramonti():
 			l_int   = ld[mask_int]
 			fl_int.append(len(l_int))
 			
+		print("tra lo zenith e l'orizzonte si ha una differenza di", fl_int[0]-fl_int[99], 'fotoni')
 		f, ax = plt.subplots()
 		ax.plot(theta/np.pi,fl_int,'-o',color='crimson')		
 		ax.xaxis.set_major_formatter(tck.FormatStrFormatter(r'%g $\pi$'))
