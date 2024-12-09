@@ -193,8 +193,8 @@ def tramonti():
 		plt.suptitle('fit dei dati con una funzione logaritmica')
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel('fotoni $m^{-3}$')
-		plt.text(0, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
-		plt.text(0,1002, 'A $log(Bx)+C$', fontsize=16)
+		plt.text(0.6, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
+		plt.text(0, min(fl_int), 'A $log(Bx)+C$', fontsize=16)
 		plt.show()
 		
 		
