@@ -2,7 +2,7 @@ import sys, os
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-import scipy
+from scipy import optimize
 import matplotlib.ticker as tck
 
 sys.path.append('funzioni.py')
@@ -143,7 +143,7 @@ def tramonti():
 		
 		#studio del flusso integrato di fotoni in funzione dell'angolo 
 		#della posizione della stella rispetto allo zenith
-		theta  = np.linspace(0,np.pi/2,100)
+		theta  = np.linspace(0.01,np.pi/2,80)
 		m_s    = max(funzioni.abs_den(lt, T, n_ter, N_ter, 8000))
 		S_th   = funzioni.th_airmass(R_ter, 8000, theta)
 		fl_int = []
@@ -157,7 +157,7 @@ def tramonti():
 			l_int   = ld[mask_int]
 			fl_int.append(len(l_int))
 			
-		print("tra lo zenith e l'orizzonte si ha una differenza di", fl_int[0]-fl_int[99], 'fotoni')
+		#print("per questa simulazione, tra lo zenith e l'orizzonte si ha una differenza di", fl_int[0]-fl_int[99], 'fotoni')
 		f, ax = plt.subplots()
 		ax.plot(theta/np.pi,fl_int,'-o',color='crimson')		
 		ax.xaxis.set_major_formatter(tck.FormatStrFormatter(r'%g $\pi$'))
@@ -167,9 +167,32 @@ def tramonti():
 		plt.ylabel("numero di fotoni $[m^{-3}]$")
 		plt.show()
 		
-			
+		#provop a fare il fit con una funzione per interpretare 
+		#il modo in cui decresce il flusso di fotoni in 
+		#funzione dell'angolo theta
+		def fit(x, A, B, C):
+			"""
+			funzione per il fit con i dati dei fotoni tilevati
+			in funzione dell'angolo che individua la posizione 
+			della stella rispetto allo Zenith
+			"""
+			return A*np.log(B*x + C)
+
+		pstart = np.array([1,1,0])
+		p, pcov = optimize.curve_fit(fit, theta, fl_int, p0=[pstart])
+		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1]," e C = ", p[2])
+		y = fit(theta, p[0], p[1], p[2])
+		plt.plot(theta,fl_int, 'o', color='crimson')
+		plt.plot(theta,y, color='slateblue')
+		plt.suptitle('fit dei dati con una funzione logaritmica')
+		plt.xlabel(r'$\theta$ [rad]')
+		plt.ylabel('fotoni $m^{-3}$')
+		plt.show()
 		
-		
+		#test del chi quadro
+		chi2 = np.sum((y-fl_int)**2 /fl_int)
+		ndf  = len(theta)-len(p)
+		print("\u03C7^2 / ndf = ",chi2/ndf )
 		
 
 
