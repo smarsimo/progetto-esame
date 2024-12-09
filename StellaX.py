@@ -8,4 +8,4 @@ sys.path.append('funzioni.py')
 import funzioni as fu
 
 X_st = pd.read_csv('/202302/observed_starX.csv')
-print(X_st)
+print(X_st.columns)
