@@ -143,7 +143,7 @@ def tramonti():
 		
 		#studio del flusso integrato di fotoni in funzione dell'angolo 
 		#della posizione della stella rispetto allo zenith
-		theta  = np.linspace(0.01,np.pi/2,80)
+		theta  = np.linspace(0,np.pi/2,80)
 		m_s    = max(funzioni.abs_den(lt, T, n_ter, N_ter, 8000))
 		S_th   = funzioni.th_airmass(R_ter, 8000, theta)
 		fl_int = []
@@ -176,11 +176,11 @@ def tramonti():
 			in funzione dell'angolo che individua la posizione 
 			della stella rispetto allo Zenith
 			"""
-			return A*np.log(B*x + C)
+			return A*np.log(B*x+C)
 
-		pstart = np.array([1,1,0])
+		pstart = np.array([1,1,1])
 		p, pcov = optimize.curve_fit(fit, theta, fl_int, p0=[pstart])
-		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1]," e C = ", p[2])
+		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1])
 		y = fit(theta, p[0], p[1], p[2])
 		
 		#test del chi quadro
@@ -194,7 +194,6 @@ def tramonti():
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel('fotoni $m^{-3}$')
 		plt.text(0.6, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
-		plt.text(0, min(fl_int), 'A $log(Bx)+C$', fontsize=16)
 		plt.show()
 		
 		
