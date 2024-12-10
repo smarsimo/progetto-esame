@@ -1,7 +1,6 @@
 import sys, os
 import numpy as np
 import math
-import decimal
 
 c=3e8       # m s^-1
 h=6.626e-34 # J s
