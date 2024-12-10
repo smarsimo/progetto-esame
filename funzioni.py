@@ -88,6 +88,9 @@ def th_airmass(R, S, theta):
 	restituisce il valore dello spessore della massa d'aria nella
 	posizione considerata
 	"""
-	return np.sqrt((R*np.cos(theta))**2 + 2*R*S + S**2) - R*np.cos(theta)
+	pt = R*np.cos(theta)
+	st = 2*R*S
+	tt = R*np.cos(theta)
+	return np.sqrt(pt**2 + st + S**2) - tt
 
 
