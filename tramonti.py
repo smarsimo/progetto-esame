@@ -88,12 +88,14 @@ def tramonti():
 		fig.suptitle( "densità e distribuzione dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
 		ax1.plot(lt,den,color='royalblue'           )
 		ax1.set(ylabel='densità dei fotoni [$m^-3$]'                             )
+		ax1.set_title('densità')
 		
 		#grafico della distribuzione dei fotoni che arrivano in caso di
 		#non assorbimento
 		ax2.hist(l_i,bins=100,color='royalblue',ec='darkblue')
 		ax2.set(xlabel=r'${\lambda}[\mu m]$')
 		ax2.set(ylabel=r'fotoni [$m^{-3}$]')	
+		ax2.set_title('distribuzione')
 		#plt.savefig('immagini/no_abs_{:}.jpeg'.format(name))
 		plt.show()			
 		
@@ -113,11 +115,13 @@ def tramonti():
 		ax3.plot(lt, abd,color='orange')
 		ax3.set(ylabel=r'densità fotoni [$m^{-3}$]')
 		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ZENITH)")
+		ax3.set_title('densità')
 		
 		#metto in un istogramma i dati raccolti
 		ax4.hist(l_i2, bins=100,color='orange',ec='darkorange')
 		ax4.set(xlabel=r'${\lambda}[\mu m]$')
 		ax4.set(ylabel=r'fotoni [$m^{-3}$]')
+		ax4.set_title('distribuzione')
 		#plt.savefig('immagini/abs_zen_{:}.jpeg'.format(name))
 		plt.show()
 		
@@ -138,6 +142,7 @@ def tramonti():
 		fig, (ax5, ax6) = plt.subplots(2,sharex=True, figsize = (9,6))
 		ax5.plot(lt, abd2,color='turquoise')
 		ax5.set(ylabel=r'densità dei fotoni [$m^{-3}$]')
+		ax5.set_title('densità')
 		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
 		
 		#grafico della distribuzione dei fotoni usando il metodo 
@@ -145,6 +150,7 @@ def tramonti():
 		ax6.hist(l_i3, bins =100, color='turquoise', ec='lightseagreen')
 		ax6.set(xlabel=r'${\lambda}[\mu m]$')
 		ax6.set(ylabel=r'fotoni [$m^{-3}$]')
+		ax6.set_title('distribuzione')
 		#plt.savefig('immagini/abs_hor_{:}.jpeg'.format(name))
 		plt.show()
 		
