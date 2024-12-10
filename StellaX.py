@@ -12,7 +12,7 @@ import funzioni as fu
 warnings.filterwarnings('ignore')
 
 X_st  = pd.read_csv('202302/observed_starX.csv')
-      #°
+theta = 65#° angolo zenitale
 R_ter = 6.378e6  #m Raggio della Terra 
 lo    = X_st['lambda (nm)'] 
 ld    = lo*10**(-9)
@@ -32,13 +32,13 @@ plt.xlabel(r'$\lambda$ (nm)')
 plt.ylabel('den_fotoni')
 plt.show()
 
-def fit_fun(x, T, theta):
+def fit_fun(x, T, n):
 	"""
 	funzione con la quale faremo il fit dei dati forniti dal file
 	per poter calcolare il valore della temperatura della stella X
 	"""
 	S    = fu.th_airmass(R_ter, 8000, theta)
-	beta = fu.beta_sc(x, n_ter, N_ter)
+	beta = fu.beta_sc(x, n, N_ter)
 	return fu.den_fot(x,T) * np.exp(-beta * S)/max(fu.den_fot(x,T) * np.exp(-beta * S))
 
 pstart=np.array([18e3,1])
