@@ -184,18 +184,18 @@ def tramonti():
 		#provop a fare il fit con una funzione per interpretare 
 		#il modo in cui decresce il flusso di fotoni in 
 		#funzione dell'angolo theta
-		def fit(x, A, B, C):
+		def fit(x, A, B, C, D):
 			"""
-			funzione per il fit con i dati dei fotoni tilevati
+			funzione per il fit con i dati dei fotoni rilevati
 			in funzione dell'angolo che individua la posizione 
 			della stella rispetto allo Zenith
 			"""
-			return A*np.log(B*x+C)
+			return A*np.log(B*x**2+C*x+D)
 
-		pstart = np.array([1,1,1])
+		pstart = np.array([1,1,1,1])
 		p, pcov = optimize.curve_fit(fit, theta, fl_int, p0=[pstart])
 		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1])
-		y = fit(theta, p[0], p[1], p[2])
+		y = fit(theta, p[0], p[1], p[2], p[3])
 		
 		#test del chi quadro
 		chi2 = np.sum((y-fl_int)**2 /fl_int)
