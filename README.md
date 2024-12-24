@@ -28,6 +28,7 @@ scattering di Rayleigh per 4 stelle:
  * Aldebaran
  * Vega
  * Spica
+ 
 per selezionarle da terminale è necessario inserire il seguente comando:
 
 	$ python3 tramonti.py --opzione
