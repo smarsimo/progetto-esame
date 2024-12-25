@@ -71,7 +71,7 @@ plt.plot(ld, y, color='limegreen', label='curva del fit')
 plt.xlabel(r'$\lambda$ (nm)')
 plt.ylabel('densità fotoni')
 plt.text(2e-6,0.8, r'T={:.0f} $\pm$ {:.0f} K'.format(p[0],error), fontsize=16)
-plt.text(2e-6,0.7, r'$\chi$/ndf = {:.4f}'.format(chi2/ndf), fontsize=16)
+plt.text(2e-6,0.7, r'$\chi^2$/ndf = {:.4f}'.format(chi2/ndf), fontsize=16)
 plt.suptitle('fit dei punti forniti')
 #plt.savefig('immagini/fit_funzione.jpeg')
 

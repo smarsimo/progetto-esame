@@ -85,7 +85,7 @@ def tramonti():
 		
 		#grafico della densità dei fotoni che arrivano dalla stella
 		fig, (ax1, ax2) = plt.subplots(2, sharex=True, figsize = (9,6))
-		fig.suptitle( "densità e distribuzione dei fotoni in funzione della lunghezza d'onda (no assorbimento)")
+		fig.suptitle( "densità e distribuzione dei fotoni in funzione della lunghezza d'onda (no assorbimento) ({:})".format(name))
 		ax1.plot(lt,den,color='royalblue'           )
 		ax1.set(ylabel='densità dei fotoni [$m^-3$]'                             )
 		ax1.set_title('densità')
@@ -114,7 +114,7 @@ def tramonti():
 		fig, (ax3, ax4) = plt.subplots(2,sharex=True, figsize = (9,6))
 		ax3.plot(lt, abd,color='orange')
 		ax3.set(ylabel=r'densità fotoni [$m^{-3}$]')
-		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ZENITH)")
+		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ZENITH) ({:})".format(name))
 		ax3.set_title('densità')
 		
 		#metto in un istogramma i dati raccolti
@@ -143,7 +143,7 @@ def tramonti():
 		ax5.plot(lt, abd2,color='turquoise')
 		ax5.set(ylabel=r'densità dei fotoni [$m^{-3}$]')
 		ax5.set_title('densità')
-		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)")
+		fig.suptitle("densità e distribuzione dei fotoni in funzione della lunghezza d'onda (ORIZZONTE)({:})".format(name))
 		
 		#grafico della distribuzione dei fotoni usando il metodo 
 		#montecarlo
@@ -175,7 +175,7 @@ def tramonti():
 		ax.plot(theta/np.pi,fl_int,'-o',color='crimson')		
 		ax.xaxis.set_major_formatter(tck.FormatStrFormatter(r'%g $\pi$'))
 		ax.xaxis.set_major_locator(tck.MultipleLocator(base=0.1))
-		plt.suptitle("flusso integrato di fotoni in funzione dell'angolo")
+		plt.suptitle("flusso integrato di fotoni in funzione dell'angolo ({:})".format(name))
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel("numero di fotoni $[m^{-3}]$")
 		#plt.savefig('immagini/phot_flux_{:}.jpeg'.format(name))
@@ -184,18 +184,18 @@ def tramonti():
 		#provop a fare il fit con una funzione per interpretare 
 		#il modo in cui decresce il flusso di fotoni in 
 		#funzione dell'angolo theta
-		def fit(x, A, B, C, D):
+		def fit(x, A, B, C):
 			"""
 			funzione per il fit con i dati dei fotoni rilevati
 			in funzione dell'angolo che individua la posizione 
 			della stella rispetto allo Zenith
 			"""
-			return A*np.log(B*x**2+C*x+D)
+			return A+B*np.log(np.cos(x)+C)
 
-		pstart = np.array([1,1,1,1])
+		pstart = np.array([600,1300,0.5])
 		p, pcov = optimize.curve_fit(fit, theta, fl_int, p0=[pstart])
-		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1])
-		y = fit(theta, p[0], p[1], p[2], p[3])
+		print("i valori ricavati dal fit per le costanti sono: A =", p[0],", B =", p[1],", C=",p[2])
+		y = fit(theta, p[0], p[1], p[2])
 		
 		#test del chi quadro
 		chi2 = np.sum((y-fl_int)**2 /fl_int)
@@ -207,7 +207,7 @@ def tramonti():
 		ax.xaxis.set_major_formatter(tck.FormatStrFormatter(r'%g $\pi$'))
 		ax.xaxis.set_major_locator(tck.MultipleLocator(base=0.1))
 		plt.plot(theta/np.pi,y, color='slateblue')
-		plt.suptitle('fit dei dati con una funzione logaritmica')
+		plt.suptitle('fit dei dati con una funzione logaritmica ({:})'.format(name))
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel('fotoni $m^{-3}$')
 		plt.text(0, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
