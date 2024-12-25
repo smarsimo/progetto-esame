@@ -96,7 +96,7 @@ def tramonti():
 		ax2.set(xlabel=r'${\lambda}[\mu m]$')
 		ax2.set(ylabel=r'fotoni [$m^{-3}$]')	
 		ax2.set_title('distribuzione')
-		#plt.savefig('immagini/no_abs_{:}.jpeg'.format(name))
+		plt.savefig('immagini/no_abs_{:}.jpeg'.format(name))
 		plt.show()			
 		
 		#utilizzo lo stesso metodo nel caso in cui si abbia 
@@ -122,7 +122,7 @@ def tramonti():
 		ax4.set(xlabel=r'${\lambda}[\mu m]$')
 		ax4.set(ylabel=r'fotoni [$m^{-3}$]')
 		ax4.set_title('distribuzione')
-		#plt.savefig('immagini/abs_zen_{:}.jpeg'.format(name))
+		plt.savefig('immagini/abs_zen_{:}.jpeg'.format(name))
 		plt.show()
 		
 		#ancora una volta utilizzo una maschera, qui considero sempre
@@ -151,7 +151,7 @@ def tramonti():
 		ax6.set(xlabel=r'${\lambda}[\mu m]$')
 		ax6.set(ylabel=r'fotoni [$m^{-3}$]')
 		ax6.set_title('distribuzione')
-		#plt.savefig('immagini/abs_hor_{:}.jpeg'.format(name))
+		plt.savefig('immagini/abs_hor_{:}.jpeg'.format(name))
 		plt.show()
 		
 		#studio del flusso integrato di fotoni in funzione dell'angolo 
@@ -178,7 +178,7 @@ def tramonti():
 		plt.suptitle("flusso integrato di fotoni in funzione dell'angolo ({:})".format(name))
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel("numero di fotoni $[m^{-3}]$")
-		#plt.savefig('immagini/phot_flux_{:}.jpeg'.format(name))
+		plt.savefig('immagini/phot_flux_{:}.jpeg'.format(name))
 		plt.show()
 		
 		#provop a fare il fit con una funzione per interpretare 
@@ -211,7 +211,7 @@ def tramonti():
 		plt.xlabel(r'$\theta$ [rad]')
 		plt.ylabel('fotoni $m^{-3}$')
 		plt.text(0, min(fl_int), r'$\chi^2 / ndf : {:3.2f} / {:d}$'.format(chi2, ndf), fontsize=16, color='dimgray')
-		#plt.savefig('immagini/fit_flux_{:}.jpeg'.format(name))
+		plt.savefig('immagini/fit_flux_{:}.jpeg'.format(name))
 		plt.show()
 		
 		
